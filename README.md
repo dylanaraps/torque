@@ -1,6 +1,6 @@
-# torque
+# torque [WIP]
 
-A TUI client for `transmission-daemon` written in pure `bash`.
+A [WIP] TUI client for `transmission-daemon` written in pure `bash`.
 
 
 ## Dependencies
