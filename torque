@@ -30,10 +30,10 @@ get_torrents() {
 }
 
 print_torrent() {
-    read -r num perc have unit 'fin' up down _ stat name <<< "$1"
+    IFS=" %" read -r num perc have unit fin up down _ stat name <<< "$1"
 
     [[ "$fin" == *Done* ]] && local c=$'\e[33m✓ '
-    ((size=${perc::-1}!=0?${have/.*}*100/${perc::-1}:0))
+    ((size=perc!=0?${have/.*}*100/perc:0))
 
     printf '\e[K\e[2m%s\e[m \e[1m%s%s\e[m\n' \
            "$num:" "${c:-$'\e[31m'}" "$name"
