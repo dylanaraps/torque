@@ -2,7 +2,7 @@
 
 A [WIP] TUI client for `transmission-daemon` written in pure `bash`.
 
-<img src="https://i.imgur.com/zeCxXzZ.jpg" alt="img" height="350px">
+<img src="https://i.imgur.com/3q3lYK0.jpg" alt="img" height="350px">
 
 
 ## Dependencies
