@@ -3,7 +3,7 @@
 # Torque - minimal tui for transmission-daemon.
 
 clear_screen() {
-    printf '\e[?7l\e[?25l\e[2J\e[;1H'
+    printf '\e[?7l\e[?25l\e[2J\e[;H'
 }
 
 get_term_size() {
@@ -12,7 +12,7 @@ get_term_size() {
 }
 
 status() {
-    printf '\e[%s;H%s\e[m\n' "$((LINES-1))" "$1"
+    printf '\e[%s;H%s\e[m' "$((LINES-1))" "$1"
 }
 
 get_torrents() {
