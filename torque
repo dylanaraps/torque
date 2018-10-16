@@ -46,7 +46,7 @@ print_torrent() {
 
 prompt() {
     torrent() { transmission-remote "$@" >/dev/null; }
-    status $'\n\e[?25h'
+    status $'\e[B\e[?25h'
 
     case "$1" in
         s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
@@ -57,7 +57,7 @@ prompt() {
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
 
-    [[ "$1" =~ (j|k) ]] || clear_screen && printf '\e[?25l\e[;H'; return
+    [[ "$1" =~ (j|k) ]] || clear_screen && printf '\e[?25l\e[;H'
 }
 
 main() {
