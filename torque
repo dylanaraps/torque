@@ -26,10 +26,9 @@ get_torrents() {
     torrents=("${torrents[@]// days }")
     torrents=("${torrents[@]//Up & Down/Started}")
     torrents=("${torrents[@]//Downloading/Started}")
-    torrents=("${torrents[@]//     None/1 MB}")
+    torrents=("${torrents[@]//     None/0 MB}")
     torrents=("${torrents[@]//None/0.0}")
-    torrents=("${torrents[@]//n\/a/1%}")
-    torrents=("${torrents[@]//0%/1%}")
+    torrents=("${torrents[@]//n\/a/0%}")
 
     for ((i=0;i<${#torrents[@]};i++)); { print_torrent "${torrents[$i]}"; }
     status $'\e[2m[s]tart [p]ause [o]pen magnet [d]elete\e[;H'
@@ -42,7 +41,7 @@ print_torrent() {
     name="${1/*${torrent[8]}}"
 
     [[ "${torrent[4]}" == *Done* ]] && local c=3
-    ((size=${torrent[2]/.*}>=1?have*100/${torrent[1]::-1}:0))
+    ((size=${torrent[1]::-1}!=0?have*100/${torrent[1]::-1}:0))
 
     printf '\e[K\e[2m%s\e[m \e[1m\e[3%sm%s\e[m\n' \
            "${torrent[0]}:" "${c:-1}" "${name#"${name%%[![:space:]]*}"}"
