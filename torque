@@ -26,7 +26,7 @@ get_torrents() {
     trnts=("${trnts[@]//n\/a/0%}")
 
     for ((i=0;i<${#trnts[@]};i++));{ print_torrent "${trnts[$i]}"; }
-    status $'\e[2m[s]tart [p]ause [o]pen magnet [d]elete\e[;H'
+    status $'\e[2m[s]tart [p]ause [r]emove [o]pen magnet \e[;H'
 }
 
 print_torrent() {
@@ -48,7 +48,7 @@ prompt() {
     case "$1" in
         s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
         p) read -rp "pause torrent: #";  torrent -t "$REPLY" -S ;;
-        d) read -rp "remove torrent: #"; torrent -t "$REPLY" -r ;;
+        r) read -rp "remove torrent: #"; torrent -t "$REPLY" -r ;;
         o) read -rp "load magnet: ";     torrent -a "$REPLY" ;;
     esac
 
