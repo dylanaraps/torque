@@ -24,7 +24,6 @@ get_torrents() {
     torrents=("${torrents[@]// day }")
     torrents=("${torrents[@]// days }")
     torrents=("${torrents[@]//Up & Down/Started}")
-    torrents=("${torrents[@]//Downloading/Started}")
     torrents=("${torrents[@]//     None/0 MB}")
     torrents=("${torrents[@]//None/0.0}")
     torrents=("${torrents[@]//n\/a/0%}")
@@ -41,7 +40,7 @@ print_torrent() {
 
     printf '\e[K\e[2m%s\e[m \e[1m\e[3%sm%s\e[m\n' \
            "$num:" "${c:-1}" "$name"
-    printf '\e[K%s\e[999D\e[15C%s\e[999D\e[33C%s\e[999D\e[44C%s\n\n' \
+    printf '\e[K%s\e[999D\e[17C%s\e[999D\e[33C%s\e[999D\e[44C%s\n\n' \
            "   $stat: " "$have / $size $unit" "⇣ $down" "⇡ $up"
 }
 
