@@ -20,7 +20,6 @@ get_torrents() {
 
     torrents=("${torrents[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
     torrents=("${torrents[@]//[0-9] [a-z][a-z][a-z]?/.}")
-    torrents=("${torrents[@]//[0-9] [a-z][a-z][a-z]/.}")
     torrents=("${torrents[@]//Up & Down/Downloading}")
     torrents=("${torrents[@]//     None/0 MB}")
     torrents=("${torrents[@]//None/0.0}")
