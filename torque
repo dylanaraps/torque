@@ -33,12 +33,12 @@ get_torrents() {
 print_torrent() {
     read -r num perc have unit 'done' up down _ stat name <<< "$1"
 
-    [[ "$done" == *Done* ]] && local c=3
+    [[ "$done" == *Done* ]] && local c=$'\e[33m✓ '
     ((size=${perc::-1}!=0?${have/.*}*100/${perc::-1}:0))
 
-    printf '\e[K\e[2m%s\e[m \e[1m\e[3%sm%s\e[m\n' \
-           "$num:" "${c:-1}" "$name"
-    printf '\e[K%s\e[999D\e[17C%s\e[999D\e[33C%s\e[999D\e[44C%s\n\n' \
+    printf '\e[K\e[2m%s\e[m \e[1m%s%s\e[m\n' \
+           "$num:" "${c:-$'\e[31m'}" "$name"
+    printf '\e[K%s\e[999D\e[17C%s\e[999D\e[36C%s\e[999D\e[47C%s\n\n' \
            "   $stat: " "$have / $size $unit" "⇣ $down" "⇡ $up"
 }
 
