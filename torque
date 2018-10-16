@@ -7,8 +7,7 @@ clear_screen() {
 }
 
 get_term_size() {
-    read -r LINES COLUMNS < <(stty size); ((j=(LINES-3)/3))
-    printf '\e[0;%sr\e[?19l' "$((j*3+1))"
+    read -r LINES COLUMNS < <(stty size); ((j=(LINES-2)/3))
 }
 
 status() {
@@ -27,9 +26,10 @@ get_torrents() {
     t=("${t[@]//n\/a/0%}")
 
     ((j=j>${#t[@]}?${#t[@]}:j))
-
     for ((i=${k:=0};i<j;i++));{ print_torrent "${t[$i]}";}
-    status $'\e[2m[s]tart [p]ause [r]emove [o]pen magnet [j/k] scroll \e[;H'
+
+    status="[s]tart [p]ause [r]emove [o]pen magnet [j/k] scroll ($j/${#t[@]})"
+    status $'\e[2m'"$status"$'\e[;H'
 }
 
 print_torrent() {
@@ -46,7 +46,7 @@ print_torrent() {
 
 prompt() {
     torrent() { transmission-remote "$@" >/dev/null; }
-    status $'\e[?25h'
+    status $'\n\e[?25h'
 
     case "$1" in
         s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
@@ -57,15 +57,15 @@ prompt() {
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
 
-    clear_screen
+    [[ "$1" =~ (j|k) ]] || clear_screen && printf '\e[?25l\e[;H'; return
 }
 
 main() {
     clear_screen
-    get_term_size
+    get_term_size; printf '\e[0;%sr\e[?19l' "$((j*3+1))"
 
     trap $'printf \e[r\e[?19h\e[?25h\e[?7h\e[999B' EXIT
-    trap  'clear_screen; get_term_size' SIGWINCH
+    trap  'clear_screen; get_term_size; k=0' SIGWINCH
 
     for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
 }
