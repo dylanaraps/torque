@@ -27,9 +27,6 @@ get_torrents() {
     torrents=("${torrents[@]//None/0.0}")
     torrents=("${torrents[@]//n\/a/0%}")
 
-    printf '%s\n' "${torrents[@]}"
-    exit
-
     for ((i=0;i<${#torrents[@]};i++)); { print_torrent "${torrents[$i]}"; }
     status $'\e[2m[s]tart [p]ause [o]pen magnet [d]elete\e[;H'
 }
