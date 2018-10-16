@@ -15,17 +15,17 @@ status() {
 }
 
 get_torrents() {
-    IFS=$'\n' read -d "" -ra torrents < <(transmission-remote -l)
-    unset 'torrents[0]' 'torrents[-1]' 2>/dev/null
+    IFS=$'\n' read -d "" -ra trnts < <(transmission-remote -l)
+    unset 'trnts[0]' 'trnts[-1]' 2>/dev/null
 
-    torrents=("${torrents[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
-    torrents=("${torrents[@]//[0-9] [a-z][a-z][a-z]?/.}")
-    torrents=("${torrents[@]//Up & Down/Downloading}")
-    torrents=("${torrents[@]//     None/0 MB}")
-    torrents=("${torrents[@]//None/0.0}")
-    torrents=("${torrents[@]//n\/a/0%}")
+    trnts=("${trnts[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
+    trnts=("${trnts[@]//[0-9] [a-z][a-z][a-z]?/.}")
+    trnts=("${trnts[@]//Up & Down/Downloading}")
+    trnts=("${trnts[@]//     None/0 MB}")
+    trnts=("${trnts[@]//None/0.0}")
+    trnts=("${trnts[@]//n\/a/0%}")
 
-    for ((i=0;i<${#torrents[@]};i++)); { print_torrent "${torrents[$i]}"; }
+    for ((i=0;i<${#trnts[@]};i++)); { print_torrent "${trnts[$i]}"; }
     status $'\e[2m[s]tart [p]ause [o]pen magnet [d]elete\e[;H'
 }
 
@@ -59,10 +59,10 @@ main() {
     clear_screen
     get_term_size
 
-    trap 'printf \\e[?25h\\e[?7h\\e[999B' EXIT
-    trap 'clear_screen; get_term_size' SIGWINCH
+    trap $'printf \e[?25h\e[?7h\e[999B' EXIT
+    trap  'clear_screen; get_term_size' SIGWINCH
 
-    for ((;;)); { get_torrents; read -rs -N 1 -t 1 && prompt "$REPLY"; }
+    for ((;;)); { get_torrents; read -rsN 1 -t 1 && prompt "$REPLY"; }
 }
 
 main "$@"
