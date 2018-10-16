@@ -3,7 +3,7 @@
 # Torque - Minimal tui for transmission-daemon.
 
 clear_screen() {
-    printf '\e[?7l\e[?25l\e[2J\e[2;H\e[m'
+    printf '\e[?7l\e[?25l\e[2J\e[2;H'
 }
 
 get_term_size() {
@@ -25,7 +25,7 @@ get_torrents() {
     trnts=("${trnts[@]//None/0.0}")
     trnts=("${trnts[@]//n\/a/0%}")
 
-    for ((i=0;i<${#trnts[@]};i++)); { print_torrent "${trnts[$i]}"; }
+    for ((i=0;i<${#trnts[@]};i++));{ print_torrent "${trnts[$i]}"; }
     status $'\e[2m[s]tart [p]ause [o]pen magnet [d]elete\e[;H'
 }
 
@@ -37,7 +37,7 @@ print_torrent() {
 
     printf '\e[K\e[2m%s\e[m \e[1m%s%s\e[m\n' \
            "$num:" "${c:-$'\e[31m'}" "$name"
-    printf '\e[K%s\e[999D\e[17C%s\e[999D\e[36C%s\e[999D\e[47C%s\n\n' \
+    printf '\e[K%s\e[99D\e[17C%s\e[99D\e[36C%s\e[99D\e[47C%s\n\n' \
            "   $stat: " "$have / $size $unit" "⇣ $down" "⇡ $up"
 }
 
@@ -62,7 +62,7 @@ main() {
     trap $'printf \e[?25h\e[?7h\e[999B' EXIT
     trap  'clear_screen; get_term_size' SIGWINCH
 
-    for ((;;)); { get_torrents; read -rsN 1 -t 1 && prompt "$REPLY"; }
+    for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
 }
 
 main "$@"
