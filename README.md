@@ -1,6 +1,6 @@
-# torque
-
 <img src="https://i.imgur.com/3q3lYK0.jpg" alt="img" height="350px" align="right">
+
+# torque
 
 A simple TUI client for `transmission-daemon`.
 
