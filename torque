@@ -7,8 +7,7 @@ clear_screen() {
 }
 
 get_term_size() {
-    shopt -s checkwinsize; (:;:)
-    [[ -z "${LINES:+$COLUMNS}" ]] && read -r LINES COLUMNS < <(stty size)
+    read -r LINES COLUMNS < <(stty size)
 }
 
 status() {
@@ -35,20 +34,15 @@ get_torrents() {
 }
 
 print_torrent() {
-    IFS=" " read -ra torrent <<< "$1"
+    read -r num perc have unit 'done' up down _ stat name <<< "$1"
 
-    have="${torrent[2]/.*}"
-    name="${1/*${torrent[8]}}"
-
-    [[ "${torrent[4]}" == *Done* ]] && local c=3
-    ((size=${torrent[1]::-1}!=0?have*100/${torrent[1]::-1}:0))
+    [[ "$done" == *Done* ]] && local c=3
+    ((size=${perc::-1}!=0?${have/.*}*100/${perc::-1}:0))
 
     printf '\e[K\e[2m%s\e[m \e[1m\e[3%sm%s\e[m\n' \
-           "${torrent[0]}:" "${c:-1}" "${name#"${name%%[![:space:]]*}"}"
-
+           "$num:" "${c:-1}" "$name"
     printf '\e[K%s\e[999D\e[15C%s\e[999D\e[33C%s\e[999D\e[44C%s\n\n' \
-           "   ${torrent[8]}: " "$have / $size ${torrent[3]}" \
-           "⇣ ${torrent[6]}" "⇡ ${torrent[5]}"
+           "   $stat: " "$have / $size $unit" "⇣ $down" "⇡ $up"
 }
 
 prompt() {
