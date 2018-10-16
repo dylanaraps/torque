@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+#
+# Torque - Minimal tui for transmission-daemon.
+
+clear_screen() {
+    printf '\e[?7l\e[?25l\e[2J\e[2;H\e[m'
+}
+
+get_term_size() {
+    shopt -s checkwinsize; (:;:)
+    [[ -z "${LINES:+$COLUMNS}" ]] && read -r LINES COLUMNS < <(stty size)
+}
+
+status() {
+    printf '\e[%s;H%s\e[m\n' "$((LINES-1))" "$1"
+}
+
+get_torrents() {
+    IFS=$'\n' read -d "" -ra torrents < <(transmission-remote -l)
+    unset 'torrents[0]' 'torrents[-1]' 2>/dev/null
+
+    # totally reliable (I swear).
+    torrents=("${torrents[@]// min }")
+    torrents=("${torrents[@]// sec }")
+    torrents=("${torrents[@]// hrs }")
+    torrents=("${torrents[@]// day }")
+    torrents=("${torrents[@]// days }")
+    torrents=("${torrents[@]//Up & Down/Started}")
+    torrents=("${torrents[@]//Downloading/Started}")
+    torrents=("${torrents[@]//     None/1 MB}")
+    torrents=("${torrents[@]//None/0.0}")
+    torrents=("${torrents[@]//n\/a/1%}")
+    torrents=("${torrents[@]//0%/1%}")
+
+    print_torrents "${torrents[@]}"
+}
+
+print_torrents() {
+    for torrent in "$@"; do
+        IFS=" " read -ra torrent_info <<< "$torrent"
+
+        [[ "${torrent_info[4]}" == *"Done"* ]] && c=3 || c=1
+
+        case "${torrent_info[3]}" in
+            "GB") have="${torrent_info[2]/.}0" ;;
+            *)    have="${torrent_info[2]/.*}" ;;
+        esac
+
+        size="???"
+        (("${torrent_info[2]/.*}">=1)) && \
+            size="$((have*100/${torrent_info[1]::-1}))"
+
+        name="${torrent/*${torrent_info[8]}}"
+
+        printf '\e[K\e[2m%s\e[m \e[1m\e[3%sm%s\e[m\n' \
+               "${torrent_info[0]}:" \
+               "$c" \
+               "${name#"${name%%[![:space:]]*}"}"
+
+        printf '\e[K%s\e[999D\e[15C%s\e[999D\e[33C%s\e[999D\e[44C%s\n\n' \
+               "   ${torrent_info[8]}: " \
+               "$have / $size ${torrent_info[3]}" \
+               "⇣ ${torrent_info[6]}" \
+               "⇡ ${torrent_info[5]}"
+    done
+
+    status $'\e[2m[s]tart [p]ause [o]pen magnet [d]elete\e[;H'
+}
+
+prompt() {
+    torrent() { transmission-remote "$@" >/dev/null; }
+    status $'\e[?25h'
+
+    case "${1: -1}" in
+        s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
+        p) read -rp "pause torrent: #";  torrent -t "$REPLY" -S ;;
+        d) read -rp "remove torrent: #"; torrent -t "$REPLY" -r ;;
+        o) read -rp "load magnet: ";     torrent -a "$REPLY" ;;
+    esac
+
+    clear_screen
+}
+
+main() {
+    clear_screen
+    get_term_size
+
+    trap 'printf \\e[?25h\\e[?7h\\e[999B' EXIT
+    trap 'clear_screen; get_term_size' SIGWINCH
+
+    for ((;;)); { get_torrents; read -rs -N 1 -t 1 && prompt "$REPLY"; }
+}
+
+main "$@"
