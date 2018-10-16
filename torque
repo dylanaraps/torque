@@ -45,7 +45,7 @@ prompt() {
     torrent() { transmission-remote "$@" >/dev/null; }
     status $'\e[?25h'
 
-    case "${1: -1}" in
+    case "$1" in
         s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
         p) read -rp "pause torrent: #";  torrent -t "$REPLY" -S ;;
         d) read -rp "remove torrent: #"; torrent -t "$REPLY" -r ;;
