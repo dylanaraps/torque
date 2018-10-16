@@ -42,7 +42,6 @@ print_torrent() {
     name="${1/*${torrent[8]}}"
 
     [[ "${torrent[4]}" == *Done* ]] && local c=3
-    [[ "${torrent[3]}" == GB ]]     && have="${torrent[2]/.}0"
     ((size=${torrent[2]/.*}>=1?have*100/${torrent[1]::-1}:0))
 
     printf '\e[K\e[2m%s\e[m \e[1m\e[3%sm%s\e[m\n' \
