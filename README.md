@@ -5,7 +5,7 @@ A simple TUI client for `transmission-daemon`.
 - Fast (*Written in pure `bash`*).
 - Minimal (*Only `50~` LOC*).
 
-<img src="https://i.imgur.com/3q3lYK0.jpg" alt="img" height="350px">
+<img src="https://i.imgur.com/3q3lYK0.jpg" alt="img" height="350px" align="right">
 
 
 ## Dependencies
