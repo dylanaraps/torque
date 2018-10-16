@@ -18,10 +18,9 @@ get_torrents() {
     IFS=$'\n' read -d "" -ra torrents < <(transmission-remote -l)
     unset 'torrents[0]' 'torrents[-1]' 2>/dev/null
 
-    torrents=("${torrents[@]// sec }")
-    torrents=("${torrents[@]// hrs }")
-    torrents=("${torrents[@]// day }")
-    torrents=("${torrents[@]// days }")
+    torrents=("${torrents[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
+    torrents=("${torrents[@]//[0-9] [a-z][a-z][a-z]?/.}")
+    torrents=("${torrents[@]//[0-9] [a-z][a-z][a-z]/.}")
     torrents=("${torrents[@]//Up & Down/Downloading}")
     torrents=("${torrents[@]//     None/0 MB}")
     torrents=("${torrents[@]//None/0.0}")
