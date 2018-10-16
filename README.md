@@ -20,6 +20,6 @@ A simple TUI client for `transmission-daemon`.
 
 ## Why?
 
-All other terminal torrent programs have a clunky
-verbose UI. I wanted something minimal.
+All other terminal torrent programs have a clunky\
+verbose UI. I wanted something minimal.\
 Why `bash`? It's fun. ¯\_(ツ)_/¯
