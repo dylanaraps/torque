@@ -27,9 +27,7 @@ get_torrents() {
     t=("${t[@]//None/0.0}")
     t=("${t[@]//n\/a/0%}")
 
-    ((j=j>${#t[@]}?${#t[@]}:j))
-    for ((i=${k:=0};i<j;i++));{ print_torrent "${t[$i]}";}
-
+    for((i=${k:=0};i<(j>${#t[@]}?${#t[@]}:j);i++));{ print_torrent "${t[$i]}";}
     status="[s]tart [p]ause [r]emove [o]pen magnet [j/k] scroll ($j/${#t[@]})"
     status $'\e[2m'"$status"$'\e[;H'
 }
