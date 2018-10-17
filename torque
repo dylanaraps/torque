@@ -13,12 +13,13 @@ get_term_size() {
 }
 
 status() {
-    printf '\e[%s;H%s\e[m' "$((LINES-1))" "$1"
+    printf '\e[2m\e[%s;H%s\e[m' "$((LINES-1))" "$1"
 }
 
 get_torrents() {
     IFS=$'\n' read -d "" -ra t < <(transmission-remote -l)
     unset 't[0]' 't[-1]' 2>/dev/null
+    printf '\e[;H'
 
     t=("${t[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
     t=("${t[@]//[0-9] [a-z][a-z][a-z]?/.}")
@@ -27,12 +28,11 @@ get_torrents() {
     t=("${t[@]//None/0.0}")
     t=("${t[@]//n\/a/0%}")
 
-    for((i=${k:=0};i<(j>${#t[@]}?${#t[@]}:j);i++));{ print_torrent "${t[$i]}";}
-    status="[s]tart [p]ause [r]emove [o]pen magnet [j/k] scroll ($j/${#t[@]})"
-    status $'\e[2m'"$status"$'\e[;H'
+    for((i=${k:=0};i<(j=j>${#t[@]}?${#t[@]}:j);i++));{ t_print "${t[$i]}";}
+    status "[s]tart [p]ause [r]emove [o]pen magnet [j/k] scroll ($j/${#t[@]})"
 }
 
-print_torrent() {
+t_print() {
     IFS=" %" read -r num perc have unit fin up down _ stat name <<< "$1"
 
     [[ "$fin" == *Done* ]] && local c=$'\e[33m✓ '
