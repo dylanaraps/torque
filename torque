@@ -3,7 +3,7 @@
 # Torque - minimal tui for transmission-daemon.
 
 clear_screen() {
-    printf '\e[?7l\e[?25l\e[2J\e[;H'
+    printf '\e[?7l\e[?25l\e[2J\e[H'
 }
 
 get_term_size() {
@@ -28,7 +28,7 @@ get_torrents() {
     t=("${t[@]//n\/a/0%}")
 
     for((i=${k:=0};i<(j=j>${#t[@]}?${#t[@]}:j);i++));{ t_print "${t[$i]}";}
-    status "[s]tart [p]ause [r]emove [o]pen [j/k] scroll ($j/${#t[@]})"$'\e[;H'
+    status "[s]tart [p]ause [r]emove [o]pen [j/k] scroll ($j/${#t[@]})"$'\e[H'
 }
 
 t_print() {
@@ -56,7 +56,7 @@ prompt() {
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
 
-    [[ "$1" =~ (j|k) ]] || clear_screen && printf '\e[?25l\e[;H'
+    [[ "$1" =~ (j|k) ]] || clear_screen && printf '\e[?25l\e[H'
 }
 
 main() {
