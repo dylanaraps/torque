@@ -22,7 +22,8 @@ get_torrents() {
 
     t=("${t[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
     t=("${t[@]//[0-9] [a-z][a-z][a-z]?/.}")
-    t=("${t[@]//Up & Down/Downloading}")
+    t=("${t[@]//Up & Down/Active}")
+    t=("${t[@]//Downloading/Active}")
     t=("${t[@]//     None/0 MB}")
     t=("${t[@]//None/0.0}")
     t=("${t[@]//n\/a/0%}")
@@ -39,8 +40,8 @@ t_print() {
 
     printf '\e[K\e[2m%s\e[m \e[1m%s%s\e[m\n' \
            "$num:" "${c:-$'\e[31m'}" "$name"
-    printf '\e[K%s\e[99D\e[17C%s\e[99D\e[36C%s\e[99D\e[47C%s\n\e[K\n' \
-           "   $stat: " "$have / $size $unit" "⇣ $down" "⇡ $up"
+    printf '\e[K\e7%s\e8\e[14C%s\e8\e[30C%s\e8\e[40C%s\e8\e[50C%s\n\e[K\n' \
+           "   $stat: " "$have / $size $unit" "(${perc}%)" "⇣ $down" "⇡ $up"
 }
 
 prompt() {
