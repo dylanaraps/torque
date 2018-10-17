@@ -48,10 +48,10 @@ prompt() {
     status $'\e[B\e[?25h'
 
     case "$1" in
-        s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
-        p) read -rp "pause torrent: #";  torrent -t "$REPLY" -S ;;
-        r) read -rp "remove torrent: #"; torrent -t "$REPLY" -r; k=0 ;;
-        o) read -rp "load magnet: ";     torrent -a "$REPLY"; k=0 ;;
+        s) read -rp "start torrent: #" n;  torrent -t "$n" -s ;;
+        p) read -rp "pause torrent: #" n;  torrent -t "$n" -S ;;
+        r) read -rp "remove torrent: #" n; torrent -t "$n" -r; k=0 ;;
+        o) read -rp "load magnet: " n;     torrent -a "$n"; k=0 ;;
         j) ((j==${#t[@]}))||((k=k>=j?k:++k,j=j<${#t[@]}?++j:j)) ;;
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
@@ -66,7 +66,7 @@ main() {
     trap $'printf \e[r\e[?19h\e[?25h\e[?7h\e[999B' EXIT
     trap  'clear_screen; get_term_size; k=0' SIGWINCH
 
-    for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
+    for ((;;)); { get_torrents; read -rsN1 -t1 k && prompt "$k"; }
 }
 
 main "$@"
