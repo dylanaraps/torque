@@ -7,7 +7,9 @@ clear_screen() {
 }
 
 get_term_size() {
-    read -r LINES COLUMNS < <(stty size); ((j=(LINES-2)/3))
+    shopt -s checkwinsize; (:;:)
+    [[ -z "$LINES" ]] && read -r LINES COLUMNS < <(stty size)
+    ((j=(LINES-2)/3))
 }
 
 status() {
