@@ -51,7 +51,7 @@ prompt() {
         s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
         p) read -rp "pause torrent: #";  torrent -t "$REPLY" -S ;;
         r) read -rp "remove torrent: #"; torrent -t "$REPLY" -r; k=0 ;;
-        o) read -rp "load magnet: ";     torrent -a "$REPLY"; k=0 ;;
+        o) read -rp "load magnet: "; torrent -a "$REPLY"; k=0; get_term_size ;;
         j) ((j==${#t[@]}))||((k=k>=j?k:++k,j=j<${#t[@]}?++j:j)) ;;
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
@@ -61,7 +61,7 @@ prompt() {
 
 main() {
     clear_screen
-    get_term_size; printf '\e[0;%sr\e[?19l' "$((j*3+1))"
+    get_term_size
 
     trap $'printf \e[r\e[?19h\e[?25h\e[?7h\e[999B' EXIT
     trap  'clear_screen; get_term_size; k=0' SIGWINCH
