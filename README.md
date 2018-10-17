@@ -1,4 +1,4 @@
-<img src="https://i.imgur.com/3q3lYK0.jpg" alt="img" height="350px" align="right">
+<img src="https://i.imgur.com/YWCXXFh.png" alt="img" height="350px" align="right">
 
 # torque
 
