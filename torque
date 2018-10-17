@@ -51,7 +51,7 @@ prompt() {
         s) read -rp "start torrent: #";  torrent -t "$REPLY" -s ;;
         p) read -rp "pause torrent: #";  torrent -t "$REPLY" -S ;;
         r) read -rp "remove torrent: #"; torrent -t "$REPLY" -r; k=0 ;;
-        o) read -rp "load magnet: "; torrent -a "$REPLY"; k=0 ;;
+        o) read -rp "load magnet: ";     torrent -a "$REPLY"; k=0 ;;
         j) ((j==${#t[@]}))||((k=k>=j?k:++k,j=j<${#t[@]}?++j:j)) ;;
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
