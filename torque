@@ -63,7 +63,7 @@ main() {
     clear_screen
     get_term_size
 
-    trap $'printf \e[r\e[?19h\e[?25h\e[?7h\e[999B' EXIT
+    trap $'printf \e[?25h\e[?7h\e[999B' EXIT
     trap  'clear_screen; get_term_size; k=0' SIGWINCH
 
     for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
