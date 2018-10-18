@@ -2,11 +2,8 @@
 #
 # Torque - minimal tui for transmission-daemon.
 
-clear_screen() {
+refresh() {
     printf '\e[?7l\e[?25l\e[2J\e[H'
-}
-
-term_size() {
     shopt -s checkwinsize; (:;:)
     [[ -z "$LINES" ]] && read -r LINES COLUMNS < <(stty size)
     ((j=(LINES-2)/3))
@@ -54,15 +51,14 @@ prompt() {
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
     esac
 
-    [[ "$1" =~ (j|k) ]] || { clear_screen; term_size; } && printf '\e[?25l\e[H'
+    [[ "$1" =~ (j|k) ]] || refresh && printf '\e[?25l\e[H'
 }
 
 main() {
-    clear_screen
-    term_size
+    refresh
 
     trap $'printf \e[?25h\e[?7h\e[999B' EXIT
-    trap  'clear_screen; term_size; k=0' SIGWINCH
+    trap  'refresh; k=0' SIGWINCH
 
     for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
 }
