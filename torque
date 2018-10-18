@@ -20,7 +20,6 @@ get_torrents() {
     IFS=$'\n' read -d "" -ra t < <(transmission-remote -l)
     unset 't[0]' 't[-1]' 2>/dev/null
 
-    t=("${t[@]//[0-9][0-9] [a-z][a-z][a-z]/.}")
     t=("${t[@]//[0-9] [a-z][a-z][a-z]?/.}")
     t=("${t[@]//Up & Down/Active}")
     t=("${t[@]//Downloading/Active}")
