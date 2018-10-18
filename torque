@@ -68,4 +68,4 @@ main() {
     for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
 }
 
-main "$@"
+main
