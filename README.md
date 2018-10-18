@@ -5,7 +5,7 @@
 A simple TUI client for `transmission-daemon`.
 
 - Fast (*Written in pure `bash`*).
-- Minimal (*Only `55~` LOC*).
+- Minimal (*Only `50~` LOC*).
 - Smooth Scrolling (*Using vim keybindings.*)
 
 
