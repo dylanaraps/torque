@@ -25,7 +25,6 @@ get_torrents() {
     t=("${t[@]//Up & Down/Active}")
     t=("${t[@]//Downloading/Active}")
     t=("${t[@]//     None/0 MB}")
-    t=("${t[@]//None/0.0}")
     t=("${t[@]//n\/a/0%}")
 
     for((i=${k:=0};i<(j=j>${#t[@]}?${#t[@]}:j);i++));{ t_print "${t[$i]}";}
