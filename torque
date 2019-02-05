@@ -2,19 +2,43 @@
 #
 # Torque - minimal tui for transmission-daemon.
 
+reset_terminal() {
+	# Code copied from fff script
+    # Reset the terminal to a useable state (undo all changes).
+    # '\e[?6l':  Unrestrict cursor movement (full window).
+    # '\e[?7h':  Re-enable line wrapping.
+    # '\e[?25h': Unhide the cursor.
+    # '\e[2J':   Clear the terminal.
+    # '\e[;r':   Set the scroll region to its default value.
+    #            Also sets cursor to (0,0).
+	printf '\e[?6l\e[?7h\e[?25h\e[2J\e[;r'
+    # Show user input.
+    stty echo
+}
+
 refresh() {
-    printf '\e[?7l\e[?25l\e[2J\e[H'
+    printf '\e[?1049h\e[?6h\e[?7l\e[?25l\e[2J\e[H'
     shopt -s checkwinsize; (:;:)
     [[ -z "$LINES" ]] && read -r LINES COLUMNS < <(stty size)
-    ((j=(LINES-2)/3))
+    # j is maximum torrents to be displayed in view
+	# change number of lines to use in the end of the screen to 3 
+	# to provide space for the color line
+	((j=(LINES-3)/3))
 }
 
 status() {
-    printf '\e[2m\e[%s;H%s\e[m' "$((LINES-1))" "$1"
+	# color info
+	printf '\e[%sH\e[1m\e[32mReady    \e[34mSeeding    \e[33mDownloading    \e[31mStopped\e[m\n' "$((LINES-2))"
+	# '\e[2m': Turn low intensity mode on (shadow letters)
+	# '\e[%s;H%s'    "$((LINES-1))": move cursor to line $lines-1
+	# '\e[m': Turn off character attributes (no more shadow letters)
+    printf '\e[2m\e[%sH%s\e[m' "$((LINES-1))" "$1"
 }
 
 get_torrents() {
+	#Create an array with the lines from the output of the command 
     IFS=$'\n' read -d "" -ra t < <(transmission-remote -l)
+	#unset/Delete the first and last element of the array created
     unset 't[0]' 't[-1]' 2>/dev/null
 
     t=("${t[@]//[0-9] [a-z][a-z][a-z]?/.}")
@@ -22,18 +46,49 @@ get_torrents() {
     t=("${t[@]//Downloading/Active}")
     t=("${t[@]//     None/0 MB}")
 
+	# new j is max of old j and number of torrents
     for((i=${k:=0};i<(j=j>${#t[@]}?${#t[@]}:j);i++));{ t_print "${t[i]/n\/a/0}";}
-    status "[s]tart [p]ause [r]emove [o]pen [j/k] scroll ($j/${#t[@]})"$'\e[H'
+    status "[s]tart [p]ause [r]emove [o]pen [q]uit [j/k] scroll ($j/${#t[@]})"$'\e[H'
 }
 
 t_print() {
     IFS=" %" read -r num perc have unit _ up down _ stat name <<< "$1"
 
-    ((size=perc!=0?${have/.*}*100/perc:0,c=perc==100?33271340:31000000))
-
+	((size=perc!=0?${have/.*}*100/perc:0))
+	# Colors 
+	# green: if ready and not seeding
+	# yellow: downloading
+	# red: stopped and not ready
+	# blue: seeding
+	if [ "$perc" == 100 ] && [ "$stat" == "Stopped" ]
+	then
+		c=32271340
+	elif [ "$perc" == 100 ] && [ "$stat" == "Idle" ]
+	then
+		c=32271340
+	elif [ "$perc" == 100 ] && [ "$stat" == "Seeding" ]
+	then
+		c=34271340
+	elif [ "$perc" -lt $((100)) ] && [ "$stat" == "Stopped" ]
+	then
+		c=31000000
+	elif [ "$perc" -lt $((100)) ] && [ "$stat" == "Idle" ]
+	then
+		c=33000000
+	elif [ "$perc" -lt $((100)) ] && [ "$stat" == "Active" ]
+	then
+		c=33000000
+	fi
+	# '\e[K' : clear line right of the cursor
+	# '\e[2m': low intensity mode on
+	# '\e[m': Turn off character attributes (no more low intensity)
+	# '\e[1m': bold mode on
     printf '\e[K\e[2m%s\e[m \e[1m\e[%s%b%s\e[m\n' \
            "$num:" "${c:0:2}m" "\\u${c:2:4}\\${c:6}" "$name"
-    printf '\e[K\e7%s\e8\e[14C%s\e8\e[32C%s\e8\e[42C%s\e8\e[52C%s\n\e[K\n' \
+    # '\e7' save cursor position and attributes
+    # '\e8' restore cursor position and attributes
+	# 'e[xC' move x columns right
+	printf '\e[K\e7%s\e8\e[14C%s\e8\e[32C%s\e8\e[42C%s\e8\e[52C%s\n\e[K\n' \
            "   $stat: " "$have / $size $unit" "(${perc}%)" "⇣ $down" "⇡ $up"
 }
 
@@ -48,16 +103,17 @@ prompt() {
         o) read -rp "load magnet: ";     send -a "$REPLY"; k=0 ;;
         j) ((j==${#t[@]}))||((k=k>=j?k:++k,j=j<${#t[@]}?++j:j)) ;;
         k) ((k==0))||((k=k<=j?k>0?--k:0:j,j=j>0?--j:j)) ;;
-    esac
+		q) exit ;;
+	esac
 
     [[ "$1" =~ (j|k) ]] || refresh && printf '\e[?25l\e[H'
 }
 
 main() {
-    refresh
+	refresh
 
-    trap $'printf \e[?25h\e[?7h\e[999B' EXIT
-    trap  'refresh; k=0' SIGWINCH
+    trap 'reset_terminal; printf "\e[?1049l"' EXIT
+    trap 'refresh; k=0' SIGWINCH
 
     for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
 }
