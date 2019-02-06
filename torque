@@ -28,7 +28,8 @@ refresh() {
 
 status() {
 	# color info
-	printf '\e[%sH\e[1m\e[32mReady    \e[34mSeeding    \e[33mDownloading    \e[31mStopped\e[m\n' "$((LINES-2))"
+	printf '\e[%sH\e[1m\e[32mReady   \e[34mSeeding   '  "$((LINES-2))"
+	printf '\e[33mDownloading   \e[31mStopped\e[m\n'
 	# '\e[2m': Turn low intensity mode on (shadow letters)
 	# '\e[%s;H%s'    "$((LINES-1))": move cursor to line $lines-1
 	# '\e[m': Turn off character attributes (no more shadow letters)
