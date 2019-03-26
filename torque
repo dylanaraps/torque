@@ -2,6 +2,12 @@
 #
 # Torque - minimal tui for transmission-daemon.
 
+# Read authentication information
+if [ $# -eq 1 ]
+then
+    auth=(--auth $1)
+fi
+
 refresh() {
     printf '\e[?7l\e[?25l\e[2J\e[H'
     shopt -s checkwinsize; (:;:)
@@ -14,7 +20,7 @@ status() {
 }
 
 get_torrents() {
-    IFS=$'\n' read -d "" -ra t < <(transmission-remote -l)
+    IFS=$'\n' read -d "" -ra t < <(transmission-remote "${auth[@]}" -l)
     unset 't[0]' 't[-1]' 2>/dev/null
 
     t=("${t[@]//[0-9] [a-z][a-z][a-z]?/.}")
@@ -38,7 +44,7 @@ t_print() {
 }
 
 prompt() {
-    send() { transmission-remote "$@" >/dev/null; }
+    send() { (transmission-remote "${auth[@]}" "$@")>/dev/null; }
     status $'\e[B\e[?25h'
 
     case "$1" in
