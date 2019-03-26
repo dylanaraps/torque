@@ -18,7 +18,7 @@ A simple TUI client for `transmission-daemon`.
 
 1. Start `transmission-daemon`.
 2. Run `torque`.
-- Add [ID]:[PASSWORD] as optional argument to 'torque' for systems with simple web authentication configured.
+- Add `[ID]:[PASSWORD]` as optional argument to 'torque' for systems with simple web authentication configured.
 
 ## Why?
 
