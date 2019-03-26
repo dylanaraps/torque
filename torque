@@ -5,7 +5,7 @@
 # Read authentication information
 if [ $# -eq 1 ]
 then
-    auth=(--auth $1)
+    auth=(--auth "$1")
 fi
 
 refresh() {
