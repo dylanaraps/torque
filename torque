@@ -23,7 +23,7 @@ get_torrents() {
     t=("${t[@]//     None/0 MB}")
 
     for((i=${k:=0};i<(j=j>${#t[@]}?${#t[@]}:j);i++));{ t_print "${t[i]/n\/a/0}";}
-    status "[s]tart [p]ause [r]emove [o]pen [j/k] [q]uit scroll ($j/${#t[@]})"$'\e[H'
+    status "[s]tart [p]ause [r]emove [o]pen [j/k] [q]uit scroll ($j/${#t[@]})"$'\e[K\e[H'
 }
 
 t_print() {
