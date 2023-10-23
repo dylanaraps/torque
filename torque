@@ -54,13 +54,22 @@ prompt() {
     [[ "$1" =~ (j|k) ]] || refresh && printf '\e[?25l\e[H'
 }
 
+read_() {
+    read -rsN1 -t1 && if [ "$REPLY" = $'\x1b' ]; then
+        read -rsN2 && case "$REPLY" in
+            '[A') REPLY='k' ;;
+            '[B') REPLY='j' ;;
+        esac
+    fi
+}
+
 main() {
     refresh
 
     trap $'printf \e[?25h\e[?7h\e[999B' EXIT
     trap  'refresh; k=0' SIGWINCH
 
-    for ((;;)); { get_torrents; read -rsN1 -t1 && prompt "$REPLY"; }
+    for ((;;)); { get_torrents; read_ && prompt "$REPLY"; }
 }
 
 main
